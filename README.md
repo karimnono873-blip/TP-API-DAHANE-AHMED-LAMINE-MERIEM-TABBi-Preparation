@@ -1,13 +1,13 @@
-# 🌌 TP API S7-300 : Programmation Avancée (Édition Astronomie)
+# 🌌 TP API S7-300 : Programmation Avancée (Master Edition)
 
 ![TIA Portal](https://img.shields.io/badge/TIA_Portal-V21-blue?style=for-the-badge&logo=siemens)
 ![HTML5](https://img.shields.io/badge/HTML5-Glassmorphism-E34F26?style=for-the-badge&logo=html5&logoColor=white)
 ![JavaScript](https://img.shields.io/badge/JavaScript-ES6-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
-![UI Theme](https://img.shields.io/badge/UI_Theme-Deep_Space_%26_Neon-BB86FC?style=for-the-badge)
+![UI Theme](https://img.shields.io/badge/UI_Theme-Deep_Space_%26_Pixel-BB86FC?style=for-the-badge)
 
-Une application web interactive *(Single-Page Application)* développée pour concevoir, documenter et simuler le TP d'Automatique Avancée sur automate Siemens S7-300. 
+Une application web interactive *(Single-Page Application)* développée comme compte-rendu académique intégral pour le TP d'Automatique Avancée sur automate Siemens S7-300. 
 
-Cette version constitue un **compte-rendu académique complet et interactif**, enveloppé dans une interface "Astronomie" (Deep Space, Glassmorphism et lueurs néon).
+Cette version exhaustive rassemble la préparation théorique, la traduction en langages industriels (LADDER / IL), des GRAFCETs interactifs, et des explications détaillées des mécanismes de mémorisation. Le tout est présenté dans une interface "Astronomie" (Deep Space, Glassmorphism et lueurs néon).
 
 ---
 
@@ -26,27 +26,34 @@ Cette version constitue un **compte-rendu académique complet et interactif**, e
 
 ---
 
-## ✨ Fonctionnalités & Contenu Pédagogique
+## ✨ Structure et Contenu Pédagogique
 
-Ce projet répond strictement au cahier des charges du TP et intègre :
+Ce projet a été architecturé en quatre sections distinctes pour répondre rigoureusement au cahier des charges :
 
-1. **Rappels & Objectifs :** Présentation du cycle de scrutation de l'automate S7-300 et des principes de mémorisation.
-2. **Préparation Théorique Complète :**
-   * Tables d'affectation des E/S pour le câblage physique des modules API.
-   * Traduction de la logique de commande en langages **LADDER (LAD)** et **Instruction List (IL / AWL)**.
-3. **Moteur GRAFCET Interactif :**
-   * Visualisation dynamique de l'évolution des étapes et des transitions.
-   * **Explications textuelles détaillées** sous chaque GRAFCET pour traduire le comportement visuel en mécanismes physiques (capteurs, mémorisation, temporisations, vérins bistables/monostables).
-4. **Design UI/UX "Deep Space" :**
-   * Fond étoilé animé (CSS pur).
-   * Cartes en *Glassmorphism* (transparence et flou).
+### 1. Introduction et Objectifs
+* Définition des objectifs d'implémentation sous TIA Portal.
+* Rappels théoriques sur le cycle de scrutation de l'API S7-300 et les principes de mémorisation du GRAFCET.
+
+### 2. Préparation Théorique
+* Élaboration des tables des variables (E/S) pour l'adressage physique.
+* Implémentation du système en **langage IL (Instruction List / AWL)**, optimisé pour les temps de cycle courts.
+
+### 3. Partie 1 : Système de Remplissage de Cuve
+* **GRAFCET interactif** avec animations des étapes et transitions.
+* **Explication du mécanisme :** Analyse textuelle de la condition de niveau bas (LSL), de la mémorisation de la pompe, et de la validation de stabilité (Temporisateur TON de 10s) déclenchée par le niveau haut (LSH).
+* Schéma de commande en **langage LADDER**.
+
+### 4. Partie 2 : Poste d'Usinage Automatisé
+* **GRAFCET interactif (Tâches simultanées) :** Mise en évidence visuelle de la divergence et convergence en ET.
+* **Explication du mécanisme :** Description de la séquence asynchrone (Départ cycle, Serrage), de l'activation parallèle des usinages (Fraisage et Lamage), et de la contrainte matérielle liée au distributeur **monostable** lors de l'éjection.
+* Schéma de commande LADDER illustrant les bobines SET/RESET et la divergence logique.
 
 ---
 
 ## 🚀 Comment lancer le projet ?
 
-Ce projet a été conçu pour être **100% autonome**. Il ne nécessite aucune base de données, aucun serveur local, ni aucune dépendance externe.
+Ce projet est conçu pour être une documentation interactive **100% autonome**. Il ne nécessite aucune installation de serveur (ni Node.js, ni XAMPP) ni de base de données.
 
-1. Téléchargez ou clonez ce dépôt sur votre machine :
+1. Clonez ce dépôt sur votre machine locale :
    ```bash
-   git clone [https://github.com/votre-nom-utilisateur/tp-api-s7300-space-edition.git](https://github.com/votre-nom-utilisateur/tp-api-s7300-space-edition.git)
+   git clone [https://github.com/votre-nom-utilisateur/tp-api-s7300-master.git](https://github.com/votre-nom-utilisateur/tp-api-s7300-master.git)
