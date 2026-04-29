@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TP : Programmation Avancée des API</title>
+    <style>
+        /* ==========================================================================
+           Thème Astronomie : Google Pixel Blue / Cyan / Violet + Glassmorphism
+           ========================================================================== */
+        @import url('https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;700&family=Roboto+Mono:wght@400;700&display=swap');
+
+        :root {
+            --bg-space: #07050F;
+            --glass-panel: rgba(20, 15, 38, 0.65);
+            --glass-border: rgba(187, 134, 252, 0.3);
+            --pixel-blue: #4285F4;
+            --pixel-cyan: #00E5FF;
+            --pixel-violet: #BB86FC;
+            --text-main: #E8EAED;
+            --text-muted: #A39EBC;
+            --power-off: #2A253E;
+            --active-glow: rgba(0, 229, 255, 0.5);
+            --font-ui: 'Google Sans', sans-serif;
+            --font-code: 'Roboto Mono', monospace;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background-color: var(--bg-space);
+            background-image: 
+                radial-gradient(1px 1px at 20px 30px, #ffffff, rgba(0,0,0,0)),
+                radial-gradient(1px 1px at 40px 70px, rgba(255,255,255,0.8), rgba(0,0,0,0)),
+                radial-gradient(1px 1px at 50px 160px, rgba(255,255,255,0.6), rgba(0,0,0,0)),
+                radial-gradient(1.5px 1.5px at 90px 40px, #00E5FF, rgba(0,0,0,0)),
+                radial-gradient(1.5px 1.5px at 130px 80px, #BB86FC, rgba(0,0,0,0));
+            background-repeat: repeat; background-size: 200px 200px;
+            color: var(--text-main); font-family: var(--font-ui); line-height: 1.6;
+        }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+
+        /* --- GLASSMORPHISM --- */
+        .glass-card {
+            background: var(--glass-panel); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border); border-radius: 16px; box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+            padding: 2rem; margin-bottom: 3rem;
+        }
+
+        /* --- PAGE DE GARDE --- */
+        .cover { text-align: center; padding: 4rem 2rem; position: relative; overflow: hidden; }
+        .cover::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 5px;
+            background: linear-gradient(90deg, var(--pixel-blue), var(--pixel-violet), var(--pixel-cyan));
+        }
+        .univ-logo { font-size: 1.2rem; color: var(--pixel-violet); text-transform: uppercase; letter-spacing: 2px; font-weight: bold; margin-bottom: 3rem; }
+        .cover h2 { color: var(--text-main); font-size: 1.8rem; margin-bottom: 0.5rem; border: none; padding: 0; }
+        .cover h1 {
+            font-size: 3.5rem; margin: 1rem 0 3rem 0;
+            background: linear-gradient(135deg, var(--pixel-blue), var(--pixel-cyan), var(--pixel-violet));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 20px rgba(0, 229, 255, 0.2);
+        }
+        .authors { display: flex; justify-content: space-around; text-align: left; background: rgba(0,0,0,0.4); padding: 2rem; border-radius: 12px; border: 1px solid rgba(187, 134, 252, 0.1); }
+        .authors h3 { color: var(--pixel-cyan); margin-top: 0; font-size: 1.1rem; text-transform: uppercase; }
+        .authors ul { list-style: none; }
+        .authors li { font-size: 1.2rem; margin-bottom: 8px; font-weight: bold; }
+
+        /* --- TYPOGRAPHY & SECTIONS --- */
+        h2.section-title { 
+            color: var(--text-main); border-left: 5px solid var(--pixel-violet); 
+            padding-left: 1rem; margin: 4rem 0 2rem 0; font-size: 2rem; 
+            text-shadow: 0 0 10px rgba(187, 134, 252, 0.3); background: rgba(187,134,252,0.05); padding: 10px 10px 10px 15px; border-radius: 0 8px 8px 0;
+        }
+        h3 { color: var(--pixel-cyan); margin: 2rem 0 1rem 0; font-size: 1.4rem; }
+        p { margin-bottom: 1rem; text-align: justify; }
+
+        /* --- TABLES --- */
+        table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; border-radius: 8px; overflow: hidden; background: rgba(0,0,0,0.3); }
+        th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid var(--glass-border); }
+        th { background: rgba(187, 134, 252, 0.15); color: var(--pixel-violet); font-weight: bold; }
+
+        /* --- CODE BOXES --- */
+        pre { 
+            background: rgba(0, 0, 0, 0.6); padding: 1.5rem; border-radius: 10px; 
+            color: var(--pixel-cyan); border-left: 4px solid var(--pixel-violet); 
+            font-family: var(--font-code); font-size: 0.95rem; margin: 1rem 0; overflow-x: auto;
+        }
+        .code-comment { color: #6272A4; }
+
+        /* --- GRAFCET VISUALIZER --- */
+        .grafcet-wrapper { display: flex; flex-direction: column; align-items: center; padding: 2rem; background: rgba(0,0,0,0.4); border-radius: 12px; margin: 2rem 0; border: 1px solid var(--glass-border); }
+        .step {
+            width: 60px; height: 60px; border: 2px solid var(--pixel-blue); border-radius: 4px;
+            display: flex; align-items: center; justify-content: center; font-weight: bold; 
+            background: var(--bg-space); color: var(--pixel-blue); transition: all 0.3s ease; position: relative; margin: 10px 0;
+        }
+        .step.initial { border: 4px double var(--pixel-blue); }
+        .step.active { 
+            border-color: var(--pixel-cyan); color: var(--bg-space); background: var(--pixel-cyan);
+            box-shadow: 0 0 20px var(--active-glow), 0 0 40px var(--pixel-cyan); transform: scale(1.1); 
+        }
+        .transition { width: 40px; height: 4px; background: var(--pixel-blue); margin: 15px 0; position: relative; }
+        .link { width: 2px; height: 30px; background: var(--pixel-blue); }
+        .action-label { position: absolute; left: 80px; width: 200px; text-align: left; font-size: 0.95rem; color: var(--pixel-violet); font-family: var(--font-code); }
+        .condition-label { position: absolute; left: 60px; font-size: 0.85rem; color: var(--text-main); font-style: italic; white-space: nowrap; }
+
+        /* Parallel Branches */
+        .divergence-et { width: 300px; height: 4px; background: var(--pixel-blue); margin: 20px 0; }
+        .branches { display: flex; justify-content: space-around; width: 100%; max-width: 400px; }
+        .branch { display: flex; flex-direction: column; align-items: center; }
+
+        /* --- EXPLANATION BOX --- */
+        .explanation-box {
+            background: rgba(66, 133, 244, 0.05); border-left: 4px solid var(--pixel-blue);
+            padding: 1.5rem; margin-top: 1rem; border-radius: 0 8px 8px 0; font-size: 0.95rem;
+        }
+
+        /* --- CONTROLS --- */
+        .controls { display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; margin-bottom: 2rem; }
+        .btn-input { 
+            background: rgba(255,255,255,0.05); color: var(--text-main); border: 1px solid var(--pixel-blue); 
+            padding: 10px 20px; border-radius: 30px; cursor: pointer; font-weight: bold; transition: all 0.3s ease; 
+        }
+        .btn-input:hover { background: rgba(66, 133, 244, 0.2); }
+        .btn-input.on { background: var(--pixel-violet); color: var(--bg-space); border-color: var(--pixel-violet); box-shadow: 0 0 15px rgba(187, 134, 252, 0.6); }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <div class="glass-card cover">
+        <div class="univ-logo">USTHB | Faculté de Génie Electrique <br> Département d'Automatique</div>
+        <h2>Module : Automates Programmables Industriels (API)</h2>
+        <h1>TP : Programmation Avancée des API</h1>
+        <p style="font-size: 1.4rem; color: var(--text-muted); margin-bottom: 3rem;">Master 1 : Automatique et Informatique Industrielle (AII)</p>
+        
+        <div class="authors">
+            <div>
+                <h3>👨‍🚀 Réalisé par (Binôme) :</h3>
+                <ul>
+                    <li>Dahane Ahmed Lamine</li>
+                    <li>Meriem Tabbi</li>
+                </ul>
+            </div>
+            <div>
+                <h3>👩‍🏫 Sous la direction de :</h3>
+                <p style="font-size: 1.2rem; font-weight: bold;">Dr. Achouri Fouzia</p>
+                <p style="color: var(--text-muted); margin-top: 0.5rem;">Année Universitaire 2025/2026</p>
+            </div>
+        </div>
+    </div>
+
+    <h2 class="section-title">1. Objectif du TP & Rappel de Cours</h2>
+    <div class="glass-card">
+        <h3>🎯 Objectif du TP</h3>
+        <p>L'objectif de ce TP est de permettre aux étudiants de concevoir, programmer et valider un système automatisé piloté par un automate programmable industriel (API S7-300), en utilisant le logiciel TIA Portal. Le travail consiste à passer de l'analyse du cahier des charges à l'élaboration du GRAFCET, pour aboutir à une implémentation en langages LADDER et IL, intégrant des temporisations et des séquences simultanées.</p>
+
+        <h3>📚 Rappel de Cours correspondant</h3>
+        <p><strong>L'automate S7-300 et son cycle de scrutation :</strong> L'API lit l'état physique des capteurs et les place dans la mémoire image des entrées (%I). Il exécute ensuite le programme utilisateur (ici l'OB1) réseau par réseau, puis met à jour la mémoire image des sorties (%Q) pour activer les préactionneurs (distributeurs, contacteurs).</p>
+        <p><strong>GRAFCET et mémorisation :</strong> Dans une séquence automatisée, chaque étape doit être mémorisée. En LADDER, cela se traduit soit par un circuit d'auto-maintien (contact en parallèle), soit par des instructions de mise à 1 (Set / S) et mise à 0 (Reset / R). Les divergences en ET nécessitent l'activation simultanée de plusieurs étapes lors du franchissement d'une seule transition.</p>
+    </div>
+
+    <h2 class="section-title">2. Préparation Théorique</h2>
+    <div class="glass-card">
+        <p>Conformément aux demandes du TP, cette section rassemble les tables d'affectation, les GRAFCETs théoriques et les codes LADDER/IL pour les deux parties avant de passer à la manipulation logicielle.</p>
+
+        <h3>2.1 Table des variables (E/S) pour les deux parties</h3>
+        
+        <h4>Partie 1 : Remplissage Cuve</h4>
+        <table>
+            <thead><tr><th>Mnémonique</th><th>Adresse</th><th>Type</th><th>Description</th></tr></thead>
+            <tbody>
+                <tr><td>CPT_LSL</td><td>%I0.0</td><td>Bool</td><td>Capteur cuve vide (Niveau Bas)</td></tr>
+                <tr><td>CPT_LSH</td><td>%I0.1</td><td>Bool</td><td>Capteur cuve pleine (Niveau Haut)</td></tr>
+                <tr><td>PP_1</td><td>%Q4.0</td><td>Bool</td><td>Moteur Pompe 1</td></tr>
+            </tbody>
+        </table>
+
+        <h4>Partie 2 : Poste d'Usinage</h4>
+        <table>
+            <thead><tr><th>Mnémonique</th><th>Adresse</th><th>Type</th><th>Description</th></tr></thead>
+            <tbody>
+                <tr><td>dcy / p</td><td>%I1.0 / %I1.1</td><td>Bool</td><td>Départ cycle / Présence pièce</td></tr>
+                <tr><td>s0 / s1</td><td>%I2.0 / %I2.1</td><td>Bool</td><td>Capteurs Serrage (Rentré / Sorti)</td></tr>
+                <tr><td>f0 / f1</td><td>%I1.6 / %I1.7</td><td>Bool</td><td>Capteurs Fraisage (Rentré / Sorti)</td></tr>
+                <tr><td>a0 / a1</td><td>%I1.2 / %I1.3</td><td>Bool</td><td>Capteurs Alésage/Lamage (Rentré / Sorti)</td></tr>
+                <tr><td>S_PLUS / S_MOINS</td><td>%Q5.4 / %Q5.5</td><td>Bool</td><td>Serrage (Distributeur Bistable)</td></tr>
+                <tr><td>F_PLUS / F_MOINS</td><td>%Q5.2 / %Q5.3</td><td>Bool</td><td>Fraisage (Distributeur Bistable)</td></tr>
+                <tr><td>A_PLUS / A_MOINS</td><td>%Q5.0 / %Q5.1</td><td>Bool</td><td>Lamage (Distributeur Bistable)</td></tr>
+                <tr><td>E_PLUS</td><td>%Q5.6</td><td>Bool</td><td>Ejection (Distributeur Monostable)</td></tr>
+            </tbody>
+        </table>
+
+        <h3>2.2 Programmation IL (Instruction List / AWL)</h3>
+        <p>Traduction de l'équation de la <strong>Partie 1 (Pompe avec Tempo)</strong> en langage IL :</p>
+<pre>
+<span class="code-comment">// Appel de la temporisation (TON) pour la stabilité 10s</span>
+      CALL  SFB4
+       IN := %I0.1      <span class="code-comment">// CPT_LSH</span>
+       PT := T#10s
+       Q  := %M0.1      <span class="code-comment">// Bit de mémorisation fin de tempo</span>
+
+<span class="code-comment">// Équation de la pompe (Marche / Arrêt / Auto-maintien)</span>
+      A     %I0.0       <span class="code-comment">// CPT_LSL (Condition de marche)</span>
+      O     %Q4.0       <span class="code-comment">// Maintien de la pompe</span>
+      AN    %M0.1       <span class="code-comment">// Condition d'arrêt (Fin tempo 10s)</span>
+      =     %Q4.0       <span class="code-comment">// Commande Pompe 1</span>
+</pre>
+    </div>
+
+    <h2 class="section-title">3. Partie 1 : Remplissage de Cuve</h2>
+    <div class="glass-card">
+        
+        <div class="controls">
+            <button class="btn-input" id="btn-lsl">Activer CPT_LSL (Vide)</button>
+            <button class="btn-input" id="btn-lsh">Activer CPT_LSH (Plein)</button>
+        </div>
+
+        <div class="grafcet-wrapper">
+            <div class="step initial active" id="c0">0</div>
+            <div class="link"></div>
+            <div class="transition"><span class="condition-label">CPT_LSL (%I0.0)</span></div>
+            <div class="link"></div>
+            <div class="step" id="c1">1<span class="action-label">PP_1 (Pompe en marche)</span></div>
+            <div class="link"></div>
+            <div class="transition"><span class="condition-label">CPT_LSH (%I0.1)</span></div>
+            <div class="link"></div>
+            <div class="step" id="c2">2<span class="action-label">PP_1 + Tempo 10s</span></div>
+            <div class="link"></div>
+            <div class="transition"><span class="condition-label">Fin Tempo 10s</span></div>
+        </div>
+
+        <div class="explanation-box">
+            <h3>Explication du mécanisme (Partie 1)</h3>
+            <p><strong>État Initial :</strong> Le GRAFCET débute à l'étape 0. La cuve est au repos. La pompe est à l'arrêt.</p>
+            <p><strong>Transitions et Mémorisation :</strong> Lorsque le liquide atteint le niveau bas, le capteur <strong>CPT_LSL (%I0.0)</strong> passe à 1. Cette <em>condition de transition</em> est validée, l'étape 1 s'active et l'étape 0 se désactive. La sortie <strong>PP_1 (%Q4.0)</strong> est activée et <em>mémorisée</em> (soit par Set, soit par un contact d'auto-maintien en LADDER). La pompe remplit la cuve.</p>
+            <p><strong>Temporisation :</strong> Lorsque le liquide atteint le niveau haut, le capteur <strong>CPT_LSH (%I0.1)</strong> déclenche le passage à l'étape 2. La pompe reste active, mais un bloc <strong>TON (Timer On-Delay)</strong> est lancé. Le système attend une stabilité physique du fluide. Une fois la <em>condition</em> des 10 secondes écoulées remplie, le GRAFCET franchit la dernière transition, retourne à l'étape 0, et désactive la mémorisation de la pompe, arrêtant le système.</p>
+        </div>
+    </div>
+
+    <h2 class="section-title">4. Partie 2 : Poste d'Usinage (Tâches Simultanées)</h2>
+    <div class="glass-card">
+        
+        <div class="controls">
+            <button class="btn-input" id="btn-dcy">Départ Cycle (dcy + p)</button>
+            <button class="btn-input" id="btn-s1">Serrage Atteint (s1)</button>
+            <button class="btn-input" id="btn-fin">Fin Fraisage/Lamage</button>
+        </div>
+
+        <div class="grafcet-wrapper">
+            <div class="step initial active" id="u0">0</div>
+            <div class="link"></div>
+            <div class="transition"><span class="condition-label">dcy . p</span></div>
+            <div class="link"></div>
+            <div class="step" id="u1">1<span class="action-label">S_PLUS (Serrage)</span></div>
+            <div class="link"></div>
+            <div class="transition"><span class="condition-label">s1 (%I2.1)</span></div>
+            
+            <div class="divergence-et"></div>
+            
+            <div class="branches">
+                <div class="branch">
+                    <div class="step" id="u11">11<span class="action-label" style="left:-200px; text-align:right;">F_PLUS (Fraisage)</span></div>
+                    <div class="link"></div><div class="transition"><span class="condition-label" style="left:-60px;">f1</span></div><div class="link"></div>
+                    <div class="step" id="u12">12<span class="action-label" style="left:-200px; text-align:right;">F_MOINS</span></div>
+                </div>
+                <div class="branch">
+                    <div class="step" id="u21">21<span class="action-label">A_PLUS (Lamage)</span></div>
+                    <div class="link"></div><div class="transition"><span class="condition-label">a1</span></div><div class="link"></div>
+                    <div class="step" id="u22">22<span class="action-label">A_MOINS + T(1s)</span></div>
+                </div>
+            </div>
+            
+            <div class="divergence-et"></div>
+            <div class="link"></div>
+            <div class="step" id="u3">3<span class="action-label">S_MOINS (Desserrage)</span></div>
+            <div class="link"></div>
+            <div class="transition"><span class="condition-label">s0 (%I2.0)</span></div>
+            <div class="step" id="u4">4<span class="action-label">E_PLUS (Monostable)</span></div>
+        </div>
+
+        <div class="explanation-box">
+            <h3>Explication du mécanisme (Partie 2)</h3>
+            <p><strong>Démarrage :</strong> Le cycle débute si la pièce est présente (capteur <strong>p</strong>) ET si l'on appuie sur départ cycle (<strong>dcy</strong>). L'étape 1 commande le distributeur bistable <strong>S_PLUS</strong> qui serre la pièce. Le vérin sort jusqu'à toucher le capteur de fin de course <strong>s1</strong>.</p>
+            <p><strong>Divergence en ET (Parallélisme) :</strong> La transition validée par <strong>s1</strong> déclenche une divergence en ET (les doubles lignes horizontales). Cela signifie que le système <em>mémorise l'activation simultanée</em> des étapes 11 (Tâche de Fraisage) et 21 (Tâche de Lamage). En programmation LADDER, cela se traduit par deux instructions de "SET" parallèles (S %M2.1 et S %M3.1).</p>
+            <p><strong>Exécution et Synchronisation :</strong> Les deux vérins d'usinage travaillent indépendamment. Le vérin A avance (A+), touche <strong>a1</strong>, attend 1 seconde pour un fond plat, puis recule. Le vérin F avance, touche <strong>f1</strong>, puis recule. La convergence en ET en bas attend que <em>les deux</em> branches soient terminées (étapes d'attente actives) pour passer à l'étape 3.</p>
+            <p><strong>Dégagement (Spécificité Monostable) :</strong> L'étape 3 desserre la pièce (S_MOINS). Une fois rentré (<strong>s0</strong>), l'étape 4 active l'éjection. Le distributeur du vérin E étant <em>monostable</em>, l'automate doit maintenir la sortie <strong>E_PLUS (%Q5.6)</strong> active en continu (bobine standard <code>()</code> en LADDER) pendant toute la durée de l'étape 4, sinon le vérin reculerait immédiatement.</p>
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+    /* ==========================================================================
+       INTERACTIVE GRAFCET LOGIC
+       ========================================================================== */
+    
+    // Partie 1 : Cuve
+    let cuveStep = 0;
+    document.getElementById('btn-lsl').onclick = function() {
+        if(cuveStep === 0) {
+            this.classList.add('on');
+            document.getElementById('c0').classList.remove('active');
+            cuveStep = 1;
+            document.getElementById('c1').classList.add('active');
+        }
+    };
+    document.getElementById('btn-lsh').onclick = function() {
+        if(cuveStep === 1) {
+            this.classList.add('on');
+            document.getElementById('c1').classList.remove('active');
+            cuveStep = 2;
+            document.getElementById('c2').classList.add('active');
+            
+            // Simulation de la temporisation
+            setTimeout(() => {
+                document.getElementById('btn-lsl').classList.remove('on');
+                document.getElementById('btn-lsh').classList.remove('on');
+                document.getElementById('c2').classList.remove('active');
+                cuveStep = 0;
+                document.getElementById('c0').classList.add('active');
+            }, 3000); // 3 sec au lieu de 10s pour la démo
+        }
+    };
+
+    // Partie 2 : Usinage
+    let uStep = 0;
+    const resetU = () => { ['0','1','11','12','21','22','3','4'].forEach(id => document.getElementById('u'+id).classList.remove('active')); };
+    
+    document.getElementById('btn-dcy').onclick = function() {
+        if(uStep === 0) {
+            this.classList.add('on'); resetU();
+            uStep = 1; document.getElementById('u1').classList.add('active');
+        }
+    };
+    document.getElementById('btn-s1').onclick = function() {
+        if(uStep === 1) {
+            this.classList.add('on'); resetU();
+            uStep = 11; // Mode parallèle
+            document.getElementById('u11').classList.add('active');
+            document.getElementById('u21').classList.add('active');
+            
+            // Auto-avance pour la démo
+            setTimeout(() => {
+                resetU();
+                document.getElementById('u12').classList.add('active');
+                document.getElementById('u22').classList.add('active');
+            }, 1500);
+        }
+    };
+    document.getElementById('btn-fin').onclick = function() {
+        if(uStep === 11) {
+            this.classList.add('on'); resetU();
+            uStep = 3; document.getElementById('u3').classList.add('active');
+            
+            setTimeout(() => {
+                resetU(); uStep = 4; document.getElementById('u4').classList.add('active');
+                setTimeout(() => {
+                    resetU(); uStep = 0; document.getElementById('u0').classList.add('active');
+                    ['btn-dcy','btn-s1','btn-fin'].forEach(id => document.getElementById(id).classList.remove('on'));
+                }, 1500);
+            }, 1500);
+        }
+    };
+</script>
+
+</body>
+</html>
